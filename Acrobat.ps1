@@ -95,7 +95,7 @@ IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirs
 	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Force
 }
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Name bFirstMileMinimized -Value 1 -Force
-# Always use page Layout Style: Single Pages Contininuous
+# Always use page Layout Style: "Single Pages Contininuous"
 # Всегда использовать стиль макета страницы: "Постранично непрерывно"
 IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access"))
 {
@@ -134,8 +134,8 @@ Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavo
 # Clear Quick Tools
 # Очистить панель инструментов
 # Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction SilentlyContinue
-# Add Quick Tools:
-# Добавить инструменты быстрого доступа:
+# Show Quick Tools in Toolbar:
+# Отобразить инструменты быстрого доступа на панели инструментов:
 IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop"))
 {
 	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Force
@@ -188,8 +188,8 @@ IF ((Get-ItempropertyValue -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGenera
 {
 	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Name "a$int" -PropertyType String -Value GoToPage -Force
 }
-# "Rotate counterclockwise; change is saved"
-# "Повернуть текущий вид против часовой стрелке; изменение сохранено"
+# "Rotate counterclockwise. Change is saved"
+# "Повернуть текущий вид против часовой стрелке. Изменение сохраняется"
 IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop"))
 {
 	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Force
@@ -207,8 +207,8 @@ Else
 {
 	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name "a0" -PropertyType String -Value RotatePagesCCW -Force
 }
-# "Rotate clockwise; change is saved"
-# "Повернуть текущий вид по часовой стрелке; изменение сохранено"
+# "Rotate clockwise. Change is saved"
+# "Повернуть текущий вид по часовой стрелке. Изменение сохраняется"
 [int]$int = ((Get-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop").Property | Where-Object -FilterScript {$_ -match $match}).Count
 $names = (Get-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop").Property
 IF ((Get-ItempropertyValue -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name $names) -notcontains "RotatePagesCW")
