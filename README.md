@@ -1,5 +1,5 @@
 ## Overview
-This PowerShell script is for Adobe Acrobat Pro DC setup
+PowerShell script for Adobe Acrobat Pro DC setup
 
 ## Features
 - Remove Adobe Acrobat Pro DC update tasks from startup;
