@@ -14,11 +14,8 @@ $services = @(
 	"AGMService",
 	"AGSService"
 )
-foreach ($service in $services)
-{
-	Get-Service -ServiceName $service | Stop-Service
-	Get-Service -ServiceName $service | Set-Service -StartupType Disabled
-}
+Get-Service -ServiceName $services | Stop-Service
+Get-Service -ServiceName $services | Set-Service -StartupType Disabled
 # Disable update tasks
 # Отключить задачи по обновлению
 Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
@@ -26,33 +23,33 @@ Get-ScheduledTask -TaskName AdobeGCInvoker* | Disable-ScheduledTask
 # Create a scheduled task to configure Adobe Acrobat Pro DC in Task Scheduler. The task runs every 31 days
 # Создать в Планировщике задач задачу по настройке Adobe Acrobat Pro DC. Задача выполняется каждые 31 дней
 $action = New-ScheduledTaskAction -Execute powershell.exe -Argument @"
-	Get-Service -ServiceName AdobeARMservice | Stop-Service
-	Get-Service -ServiceName AdobeARMservice | Set-Service -StartupType Disabled
+	Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
+	Get-Service -Name AdobeARMservice | Stop-Service
 	Stop-Process -Name acrotray -Force
-	Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
+	Get-ScheduledTask -TaskName 'Adobe Acrobat Update Task' | Disable-ScheduledTask
 	Get-ScheduledTask -TaskName AdobeGCInvoker* | Disable-ScheduledTask
 	Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0 -Force
 	Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeGCInvoker-1.0 -Force
-	Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force
-	Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force
+	Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name 'Acrobat Assistant 8.0' -Force
+	Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name 'Acrobat Assistant 8.0' -Force
 	regsvr32.exe /u /s '${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll'
-	Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name "*acrobat.adobe.com" -Force
-	Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\MS Project\Addins\PDFMaker.OfficeAddin" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin" -Force
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin" -Force
+	Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force
+	Remove-Item -Path '${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser' -Recurse -Force
+	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin -Force
+	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink -Force
+	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook -Force
+	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin -Force
+	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin -Force
+	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin -Force
+	Remove-Item -Path 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\MS Project\Addins\PDFMaker.OfficeAddin' -Force
+	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink -Force
+	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook -Force
+	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin -Force
+	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin -Force
 "@
 $trigger = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
 $settings = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
-$principal = New-ScheduledTaskPrincipal -UserID System -RunLevel Highest
+$principal = New-ScheduledTaskPrincipal -UserID "NT AUTHORITY\SYSTEM" -RunLevel Highest
 $params = @{
 	"TaskName"	= "Acrobat Pro DC"
 	"Action"	= $action
