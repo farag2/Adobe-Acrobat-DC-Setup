@@ -10,8 +10,8 @@ Start-Process -FilePath regsvr32.exe -ArgumentList "/u /s `"${env:ProgramFiles(x
 # Turn off services
 # Отключить службы
 $services = @(
-	"AdobeARMservice",
-	"AGMService",
+	"AdobeARMservice"
+	"AGMService"
 	"AGSService"
 )
 Get-Service -ServiceName $services | Stop-Service
@@ -20,8 +20,10 @@ Get-Service -ServiceName $services | Set-Service -StartupType Disabled
 # Отключить задачи по обновлению
 Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
 Get-ScheduledTask -TaskName AdobeGCInvoker* | Disable-ScheduledTask
-# Create a scheduled task to configure Adobe Acrobat Pro DC in Task Scheduler. The task runs every 31 days
-# Создать в Планировщике задач задачу по настройке Adobe Acrobat Pro DC. Задача выполняется каждые 31 дней
+# Create a task in the Task Scheduler to configure Adobe Acrobat Pro DC
+# The task runs every 31 days
+# Создать задачу в Планировщике задач по настройке Adobe Acrobat Pro DC
+# Задача выполняется каждые 31 дней
 $action = New-ScheduledTaskAction -Execute powershell.exe -Argument @"
 	Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
 	Get-Service -Name AdobeARMservice | Stop-Service
@@ -60,7 +62,7 @@ $params = @{
 Register-ScheduledTask @params -Force
 # Remove Firefox addons
 # Удалить расширение в Firefox
-Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name "*acrobat.adobe.com" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction SilentlyContinue
 Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction SilentlyContinue
 # Turn off both updates to the product's web-plugin components as well as all services
 # Отключить обновление компонентов веб-плагинов, всех сервисов Adobe и вход в учетную запись
@@ -106,17 +108,17 @@ Remove-Item -Path "$env:PUBLIC\Desktop\*Acrobat*.lnk" -Force -ErrorAction Silent
 Remove-Item -Path "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat Distiller DC.lnk" -Force -ErrorAction SilentlyContinue
 # Remove COM Add-Ins for Office
 # Удалить надстройки COM Adobe Acrobat Pro DC для Office
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin" -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
 Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\MS Project\Addins\PDFMaker.OfficeAddin" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin" -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
 # Collapse Task Pane
 # Свернуть область задач
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name aDefaultRHPViewModeL -Value AppSwitcherOnly -Force
