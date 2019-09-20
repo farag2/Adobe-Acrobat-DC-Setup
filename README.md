@@ -31,5 +31,6 @@ PowerShell script for Adobe Acrobat Pro DC setup
   - "Rotate counterclockwise. Change is saved";
   - "Rotate clockwise. Change is saved".
 
-## Link
+## Links
+- [Acrobat Pro DC installer](https://helpx.adobe.com/uk/acrobat/kb/acrobat-dc-downloads.html)
 - [Updates](https://supportdownloads.adobe.com/product.jsp?product=1&platform=Windows)
