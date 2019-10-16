@@ -10,8 +10,11 @@ Start-Process -FilePath regsvr32.exe -ArgumentList "/u /s `"${env:ProgramFiles(x
 # Turn off services
 # Отключить службы
 $services = @(
+	# Adobe Acrobat Update Service
 	"AdobeARMservice"
+	# Adobe Genuine Monitor Service
 	"AGMService"
+	# Adobe Genuine Software Integrity Service
 	"AGSService"
 )
 Get-Service -ServiceName $services | Stop-Service
@@ -73,38 +76,35 @@ IF (-not (Test-Path -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\Featur
 New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Name bUpdater -Value 0 -Force
 # Turn off all Document Cloud service access
 # Отключить все сервисы Adobe Document Cloud
-New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Name bToggleAdobeDocumentServices -Value 1 -Force
+New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Name bToggleAdobeDocumentServices -PropertyType DWord -Value 1 -Force
 # Turn off preference synchronization across devices
 # Отключить синхронизацию между устройствами
-New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Name bTogglePrefsSync -Value 1 -Force
-# Hide "Share" button lable from Toolbar
-# Скрыть значок кнопки "Общий доступ" с панели инструментов
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bHideShareButtonLabel -Value 1 -Force
+New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Name bTogglePrefsSync -PropertyType DWord -Value 1 -Force
 # Do not show messages from Adobe when the product launches
 # Не показывать сообщения от Adobe при запуске
 IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM"))
 {
 	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM" -Force
 }
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Name bShowMsgAtLaunch -Value 0 -Force
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Name bShowMsgAtLaunch -PropertyType DWord -Value 0 -Force
 # Callapse all tips on the main page
 # Свернуть подсказки на главной странице
 IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile"))
 {
 	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Force
 }
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Name bFirstMileMinimized -Value 1 -Force
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Name bFirstMileMinimized -PropertyType DWord -Value 1 -Force
 # Always use page Layout Style: "Single Pages Contininuous"
 # Всегда использовать стиль макета страницы: "Постранично непрерывно"
 IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access"))
 {
 	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access" -Force
 }
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access" -Name bOverridePageLayout -Value 1 -Force
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access" -Name iPageLayout -Value 2 -Force
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access" -Name bOverridePageLayout -PropertyType DWord -Value 1 -Force
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access" -Name iPageLayout -PropertyType DWord -Value 2 -Force
 # Remove Adobe Acrobat Pro DC shortcuts
 # Удалить ярлыки Adobe Acrobat Pro DC
-Remove-Item -Path "$env:PUBLIC\Desktop\*Acrobat*.lnk" -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "$env:PUBLIC\Desktop\Acrobat*.lnk" -Force -ErrorAction SilentlyContinue
 Remove-Item -Path "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat Distiller DC.lnk" -Force -ErrorAction SilentlyContinue
 # Remove COM Add-Ins for Office
 # Удалить надстройки COM Adobe Acrobat Pro DC для Office
@@ -119,22 +119,28 @@ Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\Ado
 Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook -Force -ErrorAction SilentlyContinue
 Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
 Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
+# Turn on dark theme
+# Включить темную тему
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name aActiveUITheme -PropertyType String -Value DarkTheme -Force
+# Hide "Share" button lable from Toolbar
+# Скрыть значок кнопки "Общий доступ" с панели инструментов
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bHideShareButtonLabel -PropertyType DWord -Value 1 -Force
 # Collapse Task Pane
 # Свернуть область задач
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name aDefaultRHPViewModeL -Value AppSwitcherOnly -Force
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name aDefaultRHPViewModeL -PropertyType String -Value AppSwitcherOnly -Force
 # Left "Edit PDF" and "Organize Pages" only tools in the Task Pane
 # Оставить в области задач только кнопки "Редактировать PDF" и "Систематизировать страницы"
 Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name * -Force
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name a0 -Value EditPDFApp -Force
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name a1 -Value PagesApp -Force
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name a0 -PropertyType String -Value EditPDFApp -Force
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name a1 -PropertyType String -Value PagesApp -Force
 # Clear favorite Quick Tools
 # Очистить Избранное на панели инструментов
 Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction SilentlyContinue
-# Clear Quick Tools
-# Очистить панель инструментов
+# Clear Quick Tools (сommented out)
+# Очистить панель инструментов (закоментировано)
 # Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction SilentlyContinue
-# Show Quick Tools in Toolbar:
-# Отобразить инструменты быстрого доступа на панели инструментов:
+# Show Quick Tools in Toolbar
+# Отобразить инструменты быстрого доступа на панели инструментов
 IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop"))
 {
 	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Force
