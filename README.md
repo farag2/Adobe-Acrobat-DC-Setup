@@ -30,7 +30,7 @@ PowerShell script for Adobe Acrobat Pro DC setup
   - "Page number";
   - "Rotate counterclockwise. Change is saved";
   - "Rotate clockwise. Change is saved"
-  - Restore last view settings when reopening documents.
+ - Restore last view settings when reopening documents.
 
 ## Links
 - [Acrobat Pro DC installer](https://helpx.adobe.com/acrobat/kb/acrobat-dc-downloads.html)
