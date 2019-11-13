@@ -1,8 +1,6 @@
 # Remove Adobe Acrobat Pro DC update tasks from startup
 # Удалить из автозагрузки задачи Adobe Acrobat Pro DC по обновлению
-Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0 -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeGCInvoker-1.0 -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction SilentlyContinue
 Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force -ErrorAction SilentlyContinue
 # Remove Adobe Acrobat Pro DC from context menu
 # Удалить пункты Adobe Acrobat Pro DC из контекстного меню
@@ -22,7 +20,17 @@ Get-Service -ServiceName $services | Set-Service -StartupType Disabled
 # Disable update tasks
 # Отключить задачи по обновлению
 Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
-Get-ScheduledTask -TaskName AdobeGCInvoker* | Disable-ScheduledTask
+Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
+# Remove Firefox addons
+# Удалить расширение в Firefox
+Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction SilentlyContinue
+# Remove COM Add-Ins for Office
+# Удалить надстройки COM Adobe Acrobat Pro DC для Office
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction SilentlyContinue
 # Create a task in the Task Scheduler to configure Adobe Acrobat Pro DC
 # The task runs every 31 days
 # Создать задачу в Планировщике задач по настройке Adobe Acrobat Pro DC
@@ -32,25 +40,16 @@ $action = New-ScheduledTaskAction -Execute powershell.exe -Argument @"
 	Get-Service -Name AdobeARMservice | Stop-Service
 	Stop-Process -Name acrotray -Force
 	Get-ScheduledTask -TaskName 'Adobe Acrobat Update Task' | Disable-ScheduledTask
-	Get-ScheduledTask -TaskName AdobeGCInvoker* | Disable-ScheduledTask
-	Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0 -Force
-	Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeGCInvoker-1.0 -Force
-	Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name 'Acrobat Assistant 8.0' -Force
+	Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
+	Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force
 	Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name 'Acrobat Assistant 8.0' -Force
 	regsvr32.exe /u /s '${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll'
 	Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force
 	Remove-Item -Path '${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser' -Recurse -Force
-	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin -Force
-	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink -Force
-	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook -Force
-	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin -Force
-	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin -Force
-	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin -Force
-	Remove-Item -Path 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\MS Project\Addins\PDFMaker.OfficeAddin' -Force
-	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink -Force
-	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook -Force
-	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin -Force
-	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin -Force
+	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force
+	Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force
+	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force
+	Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force
 "@
 $trigger = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
 $settings = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
@@ -63,10 +62,6 @@ $params = @{
 	"Principal"	= $principal
 }
 Register-ScheduledTask @params -Force
-# Remove Firefox addons
-# Удалить расширение в Firefox
-Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction SilentlyContinue
 # Turn off both updates to the product's web-plugin components as well as all services
 # Отключить обновление компонентов веб-плагинов, всех сервисов Adobe и вход в учетную запись
 IF (-not (Test-Path -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices"))
@@ -106,19 +101,6 @@ New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access" -Name iPag
 # Удалить ярлыки Adobe Acrobat Pro DC
 Remove-Item -Path "$env:PUBLIC\Desktop\Acrobat*.lnk" -Force -ErrorAction SilentlyContinue
 Remove-Item -Path "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat Distiller DC.lnk" -Force -ErrorAction SilentlyContinue
-# Remove COM Add-Ins for Office
-# Удалить надстройки COM Adobe Acrobat Pro DC для Office
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Excel\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\MS Project\Addins\PDFMaker.OfficeAddin" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\AdobeAcroOutlook.SendAsLink -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Outlook\Addins\PDFMOutlook.PDFMOutlook -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\PowerPoint\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\Word\Addins\PDFMaker.OfficeAddin -Force -ErrorAction SilentlyContinue
 # Turn on dark theme
 # Включить темную тему
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name aActiveUITheme -PropertyType String -Value DarkTheme -Force
@@ -133,9 +115,9 @@ New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name a
 Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name * -Force
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name a0 -PropertyType String -Value EditPDFApp -Force
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name a1 -PropertyType String -Value PagesApp -Force
-# Clear favorite Quick Tools
-# Очистить Избранное на панели инструментов
-Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction SilentlyContinue
+# Clear favorite Quick Tools (сommented out)
+# Очистить Избранное на панели инструментов (закоментировано)
+# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction SilentlyContinue
 # Clear Quick Tools (сommented out)
 # Очистить панель инструментов (закоментировано)
 # Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction SilentlyContinue
@@ -220,3 +202,22 @@ IF ((Get-ItempropertyValue -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGenera
 {
 	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name "a$int" -PropertyType String -Value RotatePagesCW -Force
 }
+# Restore last view settings when reopening documents
+# Восстанавливать при открытии документов прежние параметры просмотра
+IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews"))
+{
+	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -Force
+}
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -Name iRememberView -PropertyType DWord -Value 2 -Force
+
+#region Errors
+# Errors output
+# Вывод ошибок
+Write-Host "`nErrors" -BackgroundColor Red
+($Error | ForEach-Object -Process {
+	[PSCustomObject] @{
+		Line = $_.InvocationInfo.ScriptLineNumber
+		Error = $_.Exception.Message
+	}
+} | Sort-Object -Property Line | Format-Table -AutoSize -Wrap | Out-String).Trim()
+#endregion End
