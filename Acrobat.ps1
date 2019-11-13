@@ -20,7 +20,7 @@ Get-Service -ServiceName $services | Set-Service -StartupType Disabled
 # Disable update tasks
 # Отключить задачи по обновлению
 Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
-Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
+Get-ScheduledTask -TaskName AdobeGCInvoker-1.0* | Disable-ScheduledTask
 # Remove Firefox addons
 # Удалить расширение в Firefox
 Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction SilentlyContinue
@@ -40,7 +40,7 @@ $action = New-ScheduledTaskAction -Execute powershell.exe -Argument @"
 	Get-Service -Name AdobeARMservice | Stop-Service
 	Stop-Process -Name acrotray -Force
 	Get-ScheduledTask -TaskName 'Adobe Acrobat Update Task' | Disable-ScheduledTask
-	Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
+	Get-ScheduledTask -TaskName AdobeGCInvoker-1.0* | Disable-ScheduledTask
 	Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force
 	Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name 'Acrobat Assistant 8.0' -Force
 	regsvr32.exe /u /s '${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll'
@@ -220,4 +220,4 @@ Write-Host "`nErrors" -BackgroundColor Red
 		Error = $_.Exception.Message
 	}
 } | Sort-Object -Property Line | Format-Table -AutoSize -Wrap | Out-String).Trim()
-#endregion End
+#endregion Errors
