@@ -1,4 +1,4 @@
-# Remove Adobe Acrobat Pro DC update tasks from startup
+﻿# Remove Adobe Acrobat Pro DC update tasks from startup
 # Удалить из автозагрузки задачи Adobe Acrobat Pro DC по обновлению
 Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction SilentlyContinue
 Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force -ErrorAction SilentlyContinue
@@ -220,4 +220,4 @@ Write-Host "`nErrors" -BackgroundColor Red
 		Error = $_.Exception.Message
 	}
 } | Sort-Object -Property Line | Format-Table -AutoSize -Wrap | Out-String).Trim()
-#endregion Errors
+#endregion End
