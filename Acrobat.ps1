@@ -1,4 +1,5 @@
-﻿# Remove Adobe Acrobat Pro DC update tasks from startup
+﻿#region Privacy & Telemetry
+# Remove Adobe Acrobat Pro DC update tasks from startup
 # Удалить из автозагрузки задачи Adobe Acrobat Pro DC по обновлению
 Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction SilentlyContinue
 Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force -ErrorAction SilentlyContinue
@@ -21,6 +22,13 @@ Get-Service -ServiceName $services | Set-Service -StartupType Disabled
 # Отключить задачи по обновлению
 Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
 Get-ScheduledTask -TaskName AdobeGCInvoker-1.0* | Disable-ScheduledTask
+# Remove Adobe Acrobat Pro DC shortcuts
+# Удалить ярлыки Adobe Acrobat Pro DC
+Remove-Item -Path "$env:PUBLIC\Desktop\Adobe Acrobat DC.lnk" -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat Distiller DC.lnk" -Force -ErrorAction SilentlyContinue
+#endregion Privacy & Telemetry
+
+#region Addons
 # Remove Firefox addons
 # Удалить расширение в Firefox
 Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction SilentlyContinue
@@ -31,6 +39,9 @@ Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force -ErrorAct
 Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction SilentlyContinue
 Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction SilentlyContinue
 Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction SilentlyContinue
+#endregion Addons
+
+#region Task
 # Create a task in the Task Scheduler to configure Adobe Acrobat Pro DC
 # The task runs every 31 days
 # Создать задачу в Планировщике задач по настройке Adobe Acrobat Pro DC
@@ -62,6 +73,9 @@ $params = @{
 	"Principal"	= $principal
 }
 Register-ScheduledTask @params -Force
+#endregion Task
+
+#region UI
 # Turn off both updates to the product's web-plugin components as well as all services
 # Отключить обновление компонентов веб-плагинов, всех сервисов Adobe и вход в учетную запись
 IF (-not (Test-Path -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices"))
@@ -97,10 +111,6 @@ IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access"))
 }
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access" -Name bOverridePageLayout -PropertyType DWord -Value 1 -Force
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Access" -Name iPageLayout -PropertyType DWord -Value 2 -Force
-# Remove Adobe Acrobat Pro DC shortcuts
-# Удалить ярлыки Adobe Acrobat Pro DC
-Remove-Item -Path "$env:PUBLIC\Desktop\Adobe Acrobat DC.lnk" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat Distiller DC.lnk" -Force -ErrorAction SilentlyContinue
 # Turn on dark theme
 # Включить темную тему
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name aActiveUITheme -PropertyType String -Value DarkTheme -Force
@@ -115,6 +125,16 @@ New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name a
 Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name * -Force
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name a0 -PropertyType String -Value EditPDFApp -Force
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name a1 -PropertyType String -Value PagesApp -Force
+# Restore last view settings when reopening documents
+# Восстанавливать при открытии документов прежние параметры просмотра
+IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews"))
+{
+	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -Force
+}
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -Name iRememberView -PropertyType DWord -Value 2 -Force
+#endregion UI
+
+#region Quick Tools
 # Clear favorite Quick Tools (сommented out)
 # Очистить Избранное на панели инструментов (закоментировано)
 # Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction SilentlyContinue
@@ -202,22 +222,4 @@ IF ((Get-ItemPropertyValue -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGenera
 {
 	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name "a$int" -PropertyType String -Value RotatePagesCW -Force
 }
-# Restore last view settings when reopening documents
-# Восстанавливать при открытии документов прежние параметры просмотра
-IF (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews"))
-{
-	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -Force
-}
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -Name iRememberView -PropertyType DWord -Value 2 -Force
-
-#region Errors
-# Errors output
-# Вывод ошибок
-Write-Host "`nErrors" -BackgroundColor Red
-($Error | ForEach-Object -Process {
-	[PSCustomObject] @{
-		Line = $_.InvocationInfo.ScriptLineNumber
-		Error = $_.Exception.Message
-	}
-} | Sort-Object -Property Line | Format-Table -AutoSize -Wrap | Out-String).Trim()
-#endregion End
+#endregion Quick Tools
