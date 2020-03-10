@@ -20,12 +20,7 @@ Get-Service -ServiceName $services | Stop-Service
 Get-Service -ServiceName $services | Set-Service -StartupType Disabled
 # Disable update tasks
 # Отключить задачи по обновлению
-Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
-Get-ScheduledTask -TaskName AdobeGCInvoker-1.0* | Disable-ScheduledTask
-# Remove Adobe Acrobat Pro DC shortcuts
-# Удалить ярлыки Adobe Acrobat Pro DC
-Remove-Item -Path "$env:PUBLIC\Desktop\Adobe Acrobat DC.lnk" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Adobe Acrobat Distiller DC.lnk" -Force -ErrorAction SilentlyContinue
+Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | Disable-ScheduledTask
 #endregion Privacy & Telemetry
 
 #region Addons
@@ -136,10 +131,10 @@ New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -
 
 #region Quick Tools
 # Clear favorite Quick Tools (сommented out)
-# Очистить Избранное на панели инструментов (закоментировано)
+# Очистить Избранное на панели инструментов (закомментировано)
 # Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction SilentlyContinue
 # Clear Quick Tools (сommented out)
-# Очистить панель инструментов (закоментировано)
+# Очистить панель инструментов (закомментировано)
 # Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction SilentlyContinue
 # Show Quick Tools in Toolbar
 # Отобразить инструменты быстрого доступа на панели инструментов
