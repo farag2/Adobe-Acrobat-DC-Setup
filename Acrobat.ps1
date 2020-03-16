@@ -5,7 +5,10 @@ Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -N
 Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force -ErrorAction SilentlyContinue
 # Remove Adobe Acrobat Pro DC from context menu
 # Удалить пункты Adobe Acrobat Pro DC из контекстного меню
-Start-Process -FilePath regsvr32.exe -ArgumentList "/u /s `"${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll`""
+$Arguments = @"
+	"/u" "/s" "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"
+"@
+Start-Process -FilePath regsvr32.exe -ArgumentList $Arguments
 # Turn off services
 # Отключить службы
 $services = @(
