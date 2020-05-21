@@ -1,7 +1,9 @@
 ## Overview
+
 PowerShell script for Adobe Acrobat Pro DC setup
 
 ## Features
+
 - Remove Adobe Acrobat Pro DC update tasks from startup;
 - Remove Adobe Acrobat Pro DC from context menu;
 - Turn off services
@@ -30,9 +32,10 @@ PowerShell script for Adobe Acrobat Pro DC setup
   - "Page number";
   - "Rotate counterclockwise. Change is saved";
   - "Rotate clockwise. Change is saved"
- - Restore last view settings when reopening documents.
+- Restore last view settings when reopening documents.
 
 ## Links
+
 - [Acrobat Pro DC installer](https://helpx.adobe.com/acrobat/kb/acrobat-dc-downloads.html)
 - [Updates](https://supportdownloads.adobe.com/product.jsp?product=1&platform=Windows)
 - [Release Notes](https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html)
