@@ -1,6 +1,6 @@
 ## Overview
 
-PowerShell script for Adobe Acrobat Pro DC setup
+PowerShell script for Adobe Acrobat Pro/Reader DC setup
 
 ## Features
 
@@ -17,10 +17,9 @@ PowerShell script for Adobe Acrobat Pro DC setup
 - Do not show messages from Adobe when the product launches;
 - Callapse all tips on the main page;
 - Always use page Layout Style: "Single Pages Contininuous";
-- Remove Adobe Acrobat Pro DC shortcuts;
-- Turn on dark theme
+- Turn on dark theme;
 - Hide "Share" button lable from Toolbar
-- Collapse Task Pane;
+- Remember Task Pane state after document closed;
 - Left "Edit PDF" and "Organize Pages" only tools in the Task Pane;
 - Clear favorite Quick Tools (сommented out);
 - Clear Quick Tools (сommented out);
