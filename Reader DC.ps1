@@ -103,8 +103,8 @@ New-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\AVGeneral" -Name 
 # Скрыть значок кнопки "Общий доступ" с панели инструментов
 New-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\AVGeneral" -Name bHideShareButtonLabel -PropertyType DWord -Value 1 -Force
 
-# Open a document with always collapsed Task Pane
-# Открывать документ всегда со свернутой областью задач
+# Remember Task Pane state after document closed
+# Запоминать состояние области задач после закрытия документа
 New-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\AVGeneral" -Name bRHPSticky -PropertyType DWord -Value 1 -Force
 
 # Restore last view settings when reopening documents
