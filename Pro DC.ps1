@@ -1,4 +1,4 @@
-﻿#region Privacy & Telemetry
+#region Privacy & Telemetry
 # Remove Adobe Acrobat Pro DC update tasks from startup
 # Удалить из автозагрузки задачи Adobe Acrobat Pro DC по обновлению
 Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction SilentlyContinue
