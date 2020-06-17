@@ -106,7 +106,7 @@ if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM"))
 }
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM" -Name bShowMsgAtLaunch -PropertyType DWord -Value 0 -Force
 
-# Callapse all tips on the main page
+# Collapse all tips on the main page
 # Свернуть подсказки на главной странице
 if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile"))
 {
@@ -121,6 +121,7 @@ New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Originals" -Name i
 # Turn on dark theme
 # Включить темную тему
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name aActiveUITheme -PropertyType String -Value DarkTheme -Force
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bHonorOSTheme -PropertyType DWord -Value 0 -Force
 
 # Hide "Share" button lable from Toolbar
 # Скрыть значок кнопки "Общий доступ" с панели инструментов
