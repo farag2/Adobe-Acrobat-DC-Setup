@@ -151,11 +151,11 @@ New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -
 #region Quick Tools
 # Clear favorite Quick Tools (сommented out)
 # Очистить Избранное на панели инструментов (закомментировано)
-# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction  Ignore
+# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction Ignore
 
 # Clear Quick Tools (сommented out)
 # Очистить панель инструментов (закомментировано)
-# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction  Ignore
+# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction Ignore
 
 # Show Quick Tools in Toolbar
 # Отобразить инструменты быстрого доступа на панели инструментов
