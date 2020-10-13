@@ -1,20 +1,22 @@
 #region Privacy & Telemetry
 # Remove Adobe Acrobat Pro DC update tasks from startup
 # Удалить из автозагрузки задачи Adobe Acrobat Pro DC по обновлению
-Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction Ignore
+Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force -ErrorAction Ignore
 
 # Turn off services
 # Отключить службы
 $services = @(
 	# Adobe Acrobat Update Service
-	"AdobeARMservice"
+	"AdobeARMservice",
+
 	# Adobe Genuine Monitor Service
-	"AGMService"
+	"AGMService",
+
 	# Adobe Genuine Software Integrity Service
 	"AGSService"
 )
-Get-Service -ServiceName $services | Stop-Service
+Get-Service -ServiceName $services | Stop-Service -Force
 Get-Service -ServiceName $services | Set-Service -StartupType Disabled
 
 # Disable update tasks
@@ -25,15 +27,15 @@ Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | D
 #region Addons
 # Remove Firefox addons
 # Удалить расширение в Firefox
-Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction Ignore
+Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction Ignore
 
 # Remove COM Add-Ins for Office
 # Удалить надстройки COM Adobe Acrobat Pro DC для Office
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction SilentlyContinue
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction SilentlyContinue
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
 #endregion Addons
 
 #region Task
@@ -149,11 +151,11 @@ New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -
 #region Quick Tools
 # Clear favorite Quick Tools (сommented out)
 # Очистить Избранное на панели инструментов (закомментировано)
-# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction SilentlyContinue
+# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction  Ignore
 
 # Clear Quick Tools (сommented out)
 # Очистить панель инструментов (закомментировано)
-# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction SilentlyContinue
+# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction  Ignore
 
 # Show Quick Tools in Toolbar
 # Отобразить инструменты быстрого доступа на панели инструментов
