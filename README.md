@@ -38,8 +38,7 @@ PowerShell script for Adobe Acrobat Pro/Reader DC setup
 ## Links
 
 * [Acrobat Pro DC installer](https://helpx.adobe.com/acrobat/kb/acrobat-dc-downloads.html)
-  * [Updates #1](https://supportdownloads.adobe.com/product.jsp?product=1&platform=Windows)
-  * [Updates #2](https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html)
+  * [Updates](https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html)
 * [Acrobat Reader DC installer](https://get.adobe.com/ru/reader/enterprise/)
   * [Updates](https://supportdownloads.adobe.com/product.jsp?product=10&platform=Windows)
 * [Download DC Pro via PowerShell](https://github.com/farag2/Utilities/blob/master/Download/Acrobat%20DC%20Pro.ps1)
