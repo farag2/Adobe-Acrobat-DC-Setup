@@ -43,4 +43,4 @@ PowerShell script for Adobe Acrobat Pro/Reader DC setup
 * [Acrobat Reader DC x86 installer](https://get.adobe.com/ru/reader/enterprise/)
 * [Updates](https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html)
 * [Release Notes](https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html)
-* [Reader DC and Acrobat Pro DC Cleaner Tool](https://labs.adobe.com/downloads/acrobatcleaner.html)
+* [Reader DC and Acrobat Pro DC Cleaner Tool](https://www.adobe.com/devnet-docs/acrobatetk/tools/Labs/cleaner.html#downloads)
