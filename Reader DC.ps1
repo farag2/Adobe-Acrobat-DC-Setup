@@ -27,7 +27,19 @@ Get-Service -Name AdobeARMservice | Stop-Service
 Stop-Process -Name acrotray -Force
 Get-ScheduledTask -TaskName `"Adobe Acrobat Update Task`" | Disable-ScheduledTask
 Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force
-Remove-Item -Path `"${env:ProgramFiles(x86)}\Adobe\Acrobat Reader DC\Reader\Browser`" -Recurse -Force
+Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force
+if (((Get-Package -Name "Adobe Acrobat*" -ProviderName msi)).Name -match "64-bit")
+{
+	Remove-Item -Path  "$env:ProgramFiles\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force
+}
+else
+{
+	Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat Reader DC\Reader\Browser" -Recurse -Force
+}
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force
 Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force
 Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force
 Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force
