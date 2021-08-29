@@ -1,4 +1,4 @@
-﻿#region Privacy & Telemetry
+#region Privacy & Telemetry
 # Turn off service
 Get-Service -ServiceName AdobeARMservice | Stop-Service
 Get-Service -ServiceName AdobeARMservice | Set-Service -StartupType Disabled
