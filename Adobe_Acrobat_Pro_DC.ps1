@@ -14,8 +14,8 @@ $services = @(
 	# Adobe Genuine Software Integrity Service
 	"AGSService"
 )
-Get-Service -ServiceName $services | Stop-Service -Force
-Get-Service -ServiceName $services | Set-Service -StartupType Disabled
+Get-Service -Name $services | Stop-Service -Force
+Get-Service -Name $services | Set-Service -StartupType Disabled
 
 # Disable update tasks
 Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | Disable-ScheduledTask
@@ -23,8 +23,15 @@ Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | D
 
 #region Addons
 # Remove Firefox addons
-Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction Ignore
-Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction Ignore
+Remove-ItemProperty -Path HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction Ignore
+if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser")
+{
+    Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction Ignore
+}
+else
+{
+    Remove-Item -Path "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction Ignore
+}
 
 # Remove COM Add-Ins for Office
 Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
@@ -70,9 +77,19 @@ Register-ScheduledTask @Parameters -Force
 
 #region UI
 # Remove Adobe Acrobat Pro DC from context menu
-$Arguments = @"
-	"/u" "/s" "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"
+if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser")
+{
+    $Arguments = @"
+"/u" "/s" "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"
 "@
+}
+else
+{
+    $Arguments = @"
+"/u" "/s" "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"
+"@
+}
+
 Start-Process -FilePath regsvr32.exe -ArgumentList $Arguments
 
 # Turn off both updates to the product's web-plugin components as well as all services
