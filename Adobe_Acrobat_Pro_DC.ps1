@@ -1,3 +1,5 @@
+# Firstly, open and close the app. Then you may run the script, otherwise some registry key won'be created
+
 #region Privacy & Telemetry
 # Remove Adobe Acrobat Pro DC update tasks from startup
 Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction Ignore
