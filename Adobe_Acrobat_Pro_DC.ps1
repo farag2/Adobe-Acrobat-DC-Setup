@@ -59,9 +59,9 @@ Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force
 Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force
 Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force
 "@
-$Action = New-ScheduledTaskAction -Execute powershell.exe -Argument $Argument
-$Trigger = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
-$Settings = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
+$Action    = New-ScheduledTaskAction -Execute powershell.exe -Argument $Argument
+$Trigger   = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
+$Settings  = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
 $Principal = New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest
 $Parameters = @{
 	TaskName    = "Acrobat Pro DC Cleanup"
