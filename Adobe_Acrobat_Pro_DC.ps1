@@ -77,10 +77,10 @@ Register-ScheduledTask @Parameters -Force
 
 #region UI
 # Remove Adobe Acrobat Pro DC from context menu
-if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser")
+if (Test-Path -Path "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat\Browser")
 {
     $Arguments = @"
-"/u" "/s" "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"
+"/u" "/s" "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"
 "@
 }
 else
