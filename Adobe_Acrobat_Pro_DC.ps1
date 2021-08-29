@@ -14,8 +14,8 @@ $services = @(
 	# Adobe Genuine Software Integrity Service
 	"AGSService"
 )
-Get-Service -Name $services | Stop-Service -Force
-Get-Service -Name $services | Set-Service -StartupType Disabled
+Get-Service -Name $services -ErrorAction Ignore | Stop-Service -Force
+Get-Service -Name $services -ErrorAction Ignore | Set-Service -StartupType Disabled
 
 # Disable update tasks
 Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | Disable-ScheduledTask
