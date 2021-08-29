@@ -1,7 +1,7 @@
 #region Privacy & Telemetry
 # Turn off service
-Get-Service -ServiceName AdobeARMservice | Stop-Service
-Get-Service -ServiceName AdobeARMservice | Set-Service -StartupType Disabled
+Get-Service -Name AdobeARMservice | Stop-Service
+Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
 
 # Disable update tasks
 Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | Disable-ScheduledTask
