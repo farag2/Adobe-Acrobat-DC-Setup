@@ -1,3 +1,13 @@
+if (Test-Path -Path "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat\Browser")
+{
+	Write-Warning -Message "Adobe Acrobat Reader DC x64 detected. Use script for Adobe Acrobat Pro DC due to they use the same engine"
+
+	Start-Sleep -Seconds 3
+
+	Start-Process -FilePath "https://github.com/farag2/Adobe-Acrobat-DC-Setup/blob/master/Adobe_Acrobat_Pro_DC.ps1"
+	exit
+}
+
 #region Privacy & Telemetry
 # Turn off service
 Get-Service -Name AdobeARMservice | Stop-Service
