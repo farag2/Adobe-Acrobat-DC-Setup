@@ -1,6 +1,6 @@
 # Firstly, open and close the app. Then you may run the script, otherwise some registry key won'be created
 
-if (Test-Path -Path "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat\Browser")
+if (Test-Path -Path "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat")
 {
 	Write-Warning -Message "Adobe Acrobat Reader DC x64 detected. Use script for Adobe Acrobat Pro DC due to they use the same engine. This is for Adobe Acrobat Reader DC x86 only"
 
