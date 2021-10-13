@@ -48,18 +48,18 @@ Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -F
 $Argument = @"
 Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
 Get-Service -Name AdobeARMservice | Stop-Service
-Stop-Process -Name acrotray -Force
+Stop-Process -Name acrotray -Force -ErrorAction Ignore
 Get-ScheduledTask -TaskName """Adobe Acrobat Update Task""" | Disable-ScheduledTask
 Get-ScheduledTask -TaskName AdobeGCInvoker-1.0* | Disable-ScheduledTask
-Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force
-Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name """Acrobat Assistant 8.0""" -Force
+Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction Ignore
+Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name """Acrobat Assistant 8.0""" -Force -ErrorAction Ignore
 regsvr32.exe /u /s """${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"""
-Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force
-Remove-Item -Path """${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser""" -Recurse -Force
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force
+Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction Ignore
+Remove-Item -Path """${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser""" -Recurse -Force -ErrorAction Ignore
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
+Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
+Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
 "@
 $Action    = New-ScheduledTaskAction -Execute powershell.exe -Argument $Argument
 $Trigger   = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
