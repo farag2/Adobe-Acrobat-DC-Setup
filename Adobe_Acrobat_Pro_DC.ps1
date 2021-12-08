@@ -3,9 +3,6 @@
 #region Privacy & Telemetry
 # Turn off services
 $services = @(
-	# Adobe Acrobat Update Service
-	"AdobeARMservice",
-
 	# Adobe Genuine Monitor Service
 	"AGMService",
 
@@ -14,23 +11,25 @@ $services = @(
 )
 Get-Service -Name $services -ErrorAction Ignore | Stop-Service -Force
 Get-Service -Name $services -ErrorAction Ignore | Set-Service -StartupType Disabled
-
-# Disable update tasks
-Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
 #endregion Privacy & Telemetry
 
 #region Task
 # Create a task in the Task Scheduler to configure Adobe Acrobat Pro DC. The task runs every 31 days
 $Argument = @"
-Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
-Get-Service -Name AdobeARMservice | Stop-Service
+Get-Service -Name AGMService, AGSService | Set-Service -StartupType Disabled
+Get-Service -Name AGMService, AGSService | Stop-Service -Force
 Stop-Process -Name acrotray -Force -ErrorAction Ignore
 Get-ScheduledTask -TaskName """Adobe Acrobat Update Task""" | Disable-ScheduledTask
 if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\AcroRd32.exe")
 {
-	regsvr32.exe /u /s """${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"""
+	Remove-Item -Path  """$env:ProgramFiles\Adobe\Acrobat DC\Acrobat\Browser""" -Recurse -Force
+}
+else
+{
+	Remove-Item -Path """${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Reader\Browser""" -Recurse -Force
 }
 "@
+
 $Action     = New-ScheduledTaskAction -Execute powershell.exe -Argument $Argument
 $Trigger    = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
 $Settings   = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
@@ -48,16 +47,6 @@ Register-ScheduledTask @Parameters -Force
 #endregion Task
 
 #region UI
-# Remove Adobe Acrobat Pro DC from context menu
-if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\AcroRd32.exe")
-{
-    $Arguments = @"
-"/u" "/s" "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"
-"@
-}
-
-Start-Process -FilePath regsvr32.exe -ArgumentList $Arguments
-
 # Do not show messages from Adobe when the product launches
 # https://www.adobe.com/devnet-docs/acrobatetk/tools/PrefRef/Windows/index.html
 if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM"))
