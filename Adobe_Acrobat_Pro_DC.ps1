@@ -11,6 +11,9 @@ $services = @(
 )
 Get-Service -Name $services -ErrorAction Ignore | Stop-Service -Force
 Get-Service -Name $services -ErrorAction Ignore | Set-Service -StartupType Disabled
+
+# Disable task
+Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
 #endregion Privacy & Telemetry
 
 #region Task
@@ -19,7 +22,7 @@ $Argument = @"
 Get-Service -Name AGMService, AGSService | Set-Service -StartupType Disabled
 Get-Service -Name AGMService, AGSService | Stop-Service -Force
 Stop-Process -Name acrotray -Force -ErrorAction Ignore
-Get-ScheduledTask -TaskName """Adobe Acrobat Update Task""" | Disable-ScheduledTask
+Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
 if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\AcroRd32.exe")
 {
 	Remove-Item -Path  """$env:ProgramFiles\Adobe\Acrobat DC\Acrobat\Browser""" -Recurse -Force
