@@ -54,6 +54,7 @@ Register-ScheduledTask @Parameters -Force
 #region UI
 
 # Do not show messages from Adobe when the product launches
+# https://www.adobe.com/devnet-docs/acrobatetk/tools/PrefRef/Windows/index.html
 if (-not (Test-Path -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\IPM"))
 {
 	New-Item -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\IPM" -Force
