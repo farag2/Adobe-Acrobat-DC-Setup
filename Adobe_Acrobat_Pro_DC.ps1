@@ -59,6 +59,7 @@ if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\AcroRd32.
 Start-Process -FilePath regsvr32.exe -ArgumentList $Arguments
 
 # Do not show messages from Adobe when the product launches
+# https://www.adobe.com/devnet-docs/acrobatetk/tools/PrefRef/Windows/index.html
 if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM"))
 {
 	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM" -Force
