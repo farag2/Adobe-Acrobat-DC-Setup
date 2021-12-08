@@ -12,80 +12,46 @@ if (Test-Path -Path "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat")
 
 #region Privacy & Telemetry
 # Turn off service
-Get-Service -Name AdobeARMservice | Stop-Service
+Get-Service -Name AdobeARMservice | Stop-Service -Force
 Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
 
 # Disable update tasks
-Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | Disable-ScheduledTask
+Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
 #endregion Privacy & Telemetry
 
-#region Addons
-# Remove Firefox addons
-Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction Ignore
-Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat Reader DC\Reader\Browser" -Recurse -Force -ErrorAction Ignore
-
-# Remove COM Add-Ins for Office
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
-#endregion Addons
-
 #region Task
-# Create a task in the Task Scheduler to configure Adobe Acrobat Pro DC. The task runs every 31 days
+# Create a task in the Task Scheduler to configure Adobe Acrobat Reader DC. The task runs every 31 days
 $Argument = @"
 Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
-Get-Service -Name AdobeARMservice | Stop-Service
-Stop-Process -Name acrotray -Force
-Get-ScheduledTask -TaskName `"Adobe Acrobat Update Task`" | Disable-ScheduledTask
-Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force
-Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force
-if (((Get-Package -Name "Adobe Acrobat*" -ProviderName msi)).Name -match "64-bit")
+Get-Service -Name AdobeARMservice | Stop-Service -Force
+Stop-Process -Name acrotray -Force -ErrorAction Ignore
+Get-ScheduledTask -TaskName """Adobe Acrobat Update Task""" | Disable-ScheduledTask
+if (((Get-Package -Name """Adobe Acrobat*""" -ProviderName msi)).Name -match "64-bit")
 {
-	Remove-Item -Path  "$env:ProgramFiles\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force
+	Remove-Item -Path  """$env:ProgramFiles\Adobe\Acrobat DC\Acrobat\Browser""" -Recurse -Force
 }
 else
 {
-	Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat Reader DC\Reader\Browser" -Recurse -Force
+	Remove-Item -Path """${env:ProgramFiles(x86)}\Adobe\Acrobat Reader DC\Reader\Browser""" -Recurse -Force
 }
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force
 "@
 $Action     = New-ScheduledTaskAction -Execute powershell.exe -Argument $Argument
 $Trigger    = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
 $Settings   = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
-$Principal  = New-ScheduledTaskPrincipal -UserID "NT AUTHORITY\SYSTEM" -RunLevel Highest
+$Principal  = New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest
 $Parameters = @{
-	"TaskName"    = "Acrobat Reader DC Cleanup"
-	"TaskPath"    = "Setup Script"
-	"Principal"   = $Principal
-	"Action"      = $Action
-	"Description" = "Cleaning up Acrobat Reader DC after app's update"
-	"Settings"    = $Settings
-	"Trigger"     = $Trigger
+	TaskName    = "Acrobat Reader DC Cleanup"
+	TaskPath    = "Sophia Script"
+	Principal   = $Principal
+	Action      = $Action
+	Description = "Cleaning Acrobat Reader DC up after app's update"
+	Settings    = $Settings
+	Trigger     = $Trigger
 }
 Register-ScheduledTask @Parameters -Force
 #endregion Task
 
 #region UI
-# Turn off both updates to the product's web-plugin components as well as all services
-if (-not (Test-Path -Path "HKLM:\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockdown\cServices"))
-{
-	New-Item -Path "HKLM:\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockdown\cServices" -Force
-}
-# New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockdown\cServices" -Name bUpdater -Value 0 -Force
-
-# Turn off all Document Cloud service access
-# New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockdown\cServices" -Name bToggleAdobeDocumentServices -PropertyType DWord -Value 1 -Force
-
-# Turn off preference synchronization across devices
-# New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Acrobat Reader\DC\FeatureLockdown\cServices" -Name bTogglePrefsSync -PropertyType DWord -Value 1 -Force
 
 # Do not show messages from Adobe when the product launches
 if (-not (Test-Path -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\IPM"))
@@ -94,7 +60,7 @@ if (-not (Test-Path -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\IPM"))
 }
 New-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\IPM" -Name bShowMsgAtLaunch -PropertyType DWord -Value 0 -Force
 
-# Callapse all tips on the main page
+# Collapse all tips on the main page
 New-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\HomeWelcomeFirstMileReader" -Name bFirstMileMinimized -PropertyType DWord -Value 1 -Force
 
 # Always use page Layout Style: "Single Pages Continuous"
@@ -120,10 +86,10 @@ New-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\RememberedViews" 
 
 #region Quick Tools
 # Clear favorite Quick Tools (сommented out)
-# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction SilentlyContinue
+# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\AVGeneral\cFavoritesCommandsDesktop" -Name * -Force -ErrorAction Ignore
 
 # Clear Quick Tools (сommented out)
-# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction SilentlyContinue
+# Remove-ItemProperty -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\AVGeneral\cCommonToolsDesktop" -Name * -Force -ErrorAction Ignore
 
 # Show Quick Tools in Toolbar
 if (-not (Test-Path -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\AVGeneral\cCommonToolsDesktop"))
