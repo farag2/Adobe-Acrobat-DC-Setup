@@ -1,10 +1,6 @@
 # Firstly, open and close the app. Then you may run the script, otherwise some registry key won'be created
 
 #region Privacy & Telemetry
-# Remove Adobe Acrobat Pro DC update tasks from startup
-Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction Ignore
-Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name "Acrobat Assistant 8.0" -Force -ErrorAction Ignore
-
 # Turn off services
 $services = @(
 	# Adobe Acrobat Update Service
@@ -20,57 +16,28 @@ Get-Service -Name $services -ErrorAction Ignore | Stop-Service -Force
 Get-Service -Name $services -ErrorAction Ignore | Set-Service -StartupType Disabled
 
 # Disable update tasks
-Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | Disable-ScheduledTask
+Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
 #endregion Privacy & Telemetry
 
-#region Addons
-# Remove Firefox addons
-Remove-ItemProperty -Path HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction Ignore
-if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser")
-{
-    Remove-Item -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction Ignore
-}
-else
-{
-    Remove-Item -Path "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat\Browser" -Recurse -Force -ErrorAction Ignore
-}
-
-# Remove COM Add-Ins for Office
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
-#endregion Addons
-
 #region Task
-# Create a task in the Task Scheduler to configure Adobe Acrobat Pro DC
-# The task runs every 31 days
+# Create a task in the Task Scheduler to configure Adobe Acrobat Pro DC. The task runs every 31 days
 $Argument = @"
 Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
 Get-Service -Name AdobeARMservice | Stop-Service
 Stop-Process -Name acrotray -Force -ErrorAction Ignore
 Get-ScheduledTask -TaskName """Adobe Acrobat Update Task""" | Disable-ScheduledTask
-Get-ScheduledTask -TaskName AdobeGCInvoker-1.0* | Disable-ScheduledTask
-Remove-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name AdobeAAMUpdater-1.0, AdobeGCInvoker-1.0 -Force -ErrorAction Ignore
-Remove-ItemProperty -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run -Name """Acrobat Assistant 8.0""" -Force -ErrorAction Ignore
 regsvr32.exe /u /s """${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat Elements\ContextMenuShim64.dll"""
-Remove-ItemProperty HKLM:\SOFTWARE\Mozilla\Firefox\Extensions -Name *acrobat.adobe.com -Force -ErrorAction Ignore
-Remove-Item -Path """${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\Browser""" -Recurse -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\PDF* -Force -ErrorAction Ignore
-Remove-Item -Path HKLM:\SOFTWARE\WOW6432Node\Microsoft\Office\*\Addins\Adobe* -Force -ErrorAction Ignore
 "@
-$Action    = New-ScheduledTaskAction -Execute powershell.exe -Argument $Argument
-$Trigger   = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
-$Settings  = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
-$Principal = New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest
+$Action     = New-ScheduledTaskAction -Execute powershell.exe -Argument $Argument
+$Trigger    = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
+$Settings   = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
+$Principal  = New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest
 $Parameters = @{
 	TaskName    = "Acrobat Pro DC Cleanup"
 	TaskPath    = "Sophia Script"
 	Principal   = $Principal
 	Action      = $Action
-	Description = "Clean Acrobat Pro DC after every app's update"
+	Description = "Cleaning Acrobat Pro DC up after every app's update"
 	Settings    = $Settings
 	Trigger     = $Trigger
 }
@@ -94,27 +61,6 @@ else
 
 Start-Process -FilePath regsvr32.exe -ArgumentList $Arguments
 
-# Turn off both updates to the product's web-plugin components as well as all services
-if (-not (Test-Path -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices"))
-{
-	New-Item -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Force
-}
-New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Name bUpdater -Value 0 -Force
-
-# Turn off all Document Cloud service access
-if (-not (Test-Path -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices"))
-{
-	New-Item -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Force
-}
-New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Name bToggleAdobeDocumentServices -PropertyType DWord -Value 1 -Force
-
-# Turn off preference synchronization across devices
-if (-not (Test-Path -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices"))
-{
-	New-Item -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Force
-}
-New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockdown\cServices" -Name bTogglePrefsSync -PropertyType DWord -Value 1 -Force
-
 # Do not show messages from Adobe when the product launches
 if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM"))
 {
@@ -123,10 +69,6 @@ if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM"))
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM" -Name bShowMsgAtLaunch -PropertyType DWord -Value 0 -Force
 
 # Collapse all tips on the main page
-if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile"))
-{
-	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Force
-}
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Name bFirstMileMinimized -PropertyType DWord -Value 1 -Force
 
 # Always use page Layout Style: "Single Pages Continuous"
