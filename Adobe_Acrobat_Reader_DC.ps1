@@ -11,12 +11,6 @@ if (Test-Path -Path "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat")
 }
 
 #region Privacy & Telemetry
-# Turn off service
-Get-Service -Name AdobeARMservice | Stop-Service -Force
-Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
-
-# Disable update tasks
-Get-ScheduledTask -TaskName "Adobe Acrobat Update Task" | Disable-ScheduledTask
 #endregion Privacy & Telemetry
 
 #region Task
@@ -26,7 +20,7 @@ Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
 Get-Service -Name AdobeARMservice | Stop-Service -Force
 Stop-Process -Name acrotray -Force -ErrorAction Ignore
 Get-ScheduledTask -TaskName """Adobe Acrobat Update Task""" | Disable-ScheduledTask
-if (((Get-Package -Name """Adobe Acrobat*""" -ProviderName msi)).Name -match "64-bit")
+if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\AcroRd32.exe")
 {
 	Remove-Item -Path  """$env:ProgramFiles\Adobe\Acrobat DC\Acrobat\Browser""" -Recurse -Force
 }
@@ -35,6 +29,7 @@ else
 	Remove-Item -Path """${env:ProgramFiles(x86)}\Adobe\Acrobat Reader DC\Reader\Browser""" -Recurse -Force
 }
 "@
+
 $Action     = New-ScheduledTaskAction -Execute powershell.exe -Argument $Argument
 $Trigger    = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
 $Settings   = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
@@ -52,7 +47,6 @@ Register-ScheduledTask @Parameters -Force
 #endregion Task
 
 #region UI
-
 # Do not show messages from Adobe when the product launches
 # https://www.adobe.com/devnet-docs/acrobatetk/tools/PrefRef/Windows/index.html
 if (-not (Test-Path -Path "HKCU:\Software\Adobe\Acrobat Reader\DC\IPM"))
