@@ -23,7 +23,7 @@ Get-Service -Name AGMService, AGSService | Set-Service -StartupType Disabled
 Get-Service -Name AGMService, AGSService | Stop-Service -Force
 Stop-Process -Name acrotray -Force -ErrorAction Ignore
 Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
-if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\AcroRd32.exe")
+if (Test-Path -Path """${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\AcroRd32.exe""")
 {
 	Remove-Item -Path  """$env:ProgramFiles\Adobe\Acrobat DC\Acrobat\Browser""" -Recurse -Force
 }
