@@ -1,6 +1,10 @@
 # Firstly, open and close the app. Then you may run the script, otherwise some registry key won'be created
 
 #region Privacy & Telemetry
+# Remove autorun
+Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name AdobeAAMUpdater-1.0 -Force
+Remove-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "Acrobat Assistant 8.0" -Force
+
 # Turn off services
 $services = @(
 	# Adobe Genuine Monitor Service
@@ -9,11 +13,11 @@ $services = @(
 	# Adobe Genuine Software Integrity Service
 	"AGSService"
 )
-Get-Service -Name $services -ErrorAction Ignore | Stop-Service -Force
-Get-Service -Name $services -ErrorAction Ignore | Set-Service -StartupType Disabled
+Get-Service -Name $Services -ErrorAction Ignore | Stop-Service -Force
+Get-Service -Name $Services -ErrorAction Ignore | Set-Service -StartupType Disabled
 
 # Disable task
-Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
+Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | Disable-ScheduledTask
 #endregion Privacy & Telemetry
 
 #region Task
@@ -83,7 +87,7 @@ else
 	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bRHPSticky -PropertyType DWord -Value 1 -Force
 }
 
-# Left "Edit PDF" and "Organize Pages" only tools in the Task Pane
+# Left "Edit PDF" and "Organize Pages" the only tools in the Task Pane
 if (Test-Path -Path "${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\AcroRd32.exe")
 {
 	Remove-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AcroApp\cFavorites" -Name * -Force
