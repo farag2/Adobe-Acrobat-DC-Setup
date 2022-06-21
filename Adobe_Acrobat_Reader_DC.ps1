@@ -15,39 +15,6 @@ if (Test-Path -Path "${env:ProgramFiles}\Adobe\Acrobat DC\Acrobat")
 Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
 #endregion Privacy & Telemetry
 
-#region Task
-# Create a task in the Task Scheduler to configure Adobe Acrobat Reader DC. The task runs every 31 days
-$Argument = @"
-Get-Service -Name AdobeARMservice | Set-Service -StartupType Disabled
-Get-Service -Name AdobeARMservice | Stop-Service -Force
-Stop-Process -Name acrotray -Force -ErrorAction Ignore
-Get-ScheduledTask -TaskName AdobeGCInvoker-1.0 | Disable-ScheduledTask
-if (Test-Path -Path """${env:ProgramFiles(x86)}\Adobe\Acrobat DC\Acrobat\AcroRd32.exe""")
-{
-	Remove-Item -Path  """$env:ProgramFiles\Adobe\Acrobat DC\Acrobat\Browser""" -Recurse -Force
-}
-else
-{
-	Remove-Item -Path """${env:ProgramFiles(x86)}\Adobe\Acrobat Reader DC\Reader\Browser""" -Recurse -Force
-}
-"@
-
-$Action     = New-ScheduledTaskAction -Execute powershell.exe -Argument $Argument
-$Trigger    = New-ScheduledTaskTrigger -Daily -DaysInterval 31 -At 9am
-$Settings   = New-ScheduledTaskSettingsSet -Compatibility Win8 -StartWhenAvailable
-$Principal  = New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest
-$Parameters = @{
-	TaskName    = "Acrobat Reader DC Cleanup"
-	TaskPath    = "Sophia Script"
-	Principal   = $Principal
-	Action      = $Action
-	Description = "Cleaning Acrobat Reader DC up after app's update"
-	Settings    = $Settings
-	Trigger     = $Trigger
-}
-Register-ScheduledTask @Parameters -Force
-#endregion Task
-
 #region UI
 # Do not show messages from Adobe when the product launches
 # https://www.adobe.com/devnet-docs/acrobatetk/tools/PrefRef/Windows/index.html
