@@ -1,24 +1,18 @@
 # Firstly, open and close the app. Then you may run the script, otherwise some registry key won'be created
+Get-Service -Name AdobeARMservice | Stop-Service -Force
 
-#region Privacy & Telemetry
-# Remove autorun
-Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name AdobeAAMUpdater-1.0 -Force
-Remove-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "Acrobat Assistant 8.0" -Force
+# Unisntall Adobe Software Integrity Service
+if (Test-Path -Path "${env:ProgramFiles(x86)}\Common Files\Adobe\AdobeGCClient\AdobeCleanUpUtility.exe")
+{
+	Start-Process -FilePath "${env:ProgramFiles(x86)}\Common Files\Adobe\AdobeGCClient\AdobeCleanUpUtility.exe" -Wait
+}
 
-# Turn off services
-$services = @(
-	# Adobe Genuine Monitor Service
-	"AGMService",
-
-	# Adobe Genuine Software Integrity Service
-	"AGSService"
-)
-Get-Service -Name $Services -ErrorAction Ignore | Stop-Service -Force
-Get-Service -Name $Services -ErrorAction Ignore | Set-Service -StartupType Disabled
-
-# Disable task
-Get-ScheduledTask -TaskName "Adobe Acrobat Update Task", AdobeGCInvoker-1.0* | Disable-ScheduledTask
-#endregion Privacy & Telemetry
+# Accept EULA even it was accepted programmatically. Non-acceptance of the UELA may result in the 100700 (100600) error when you run the updater
+if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer"))
+{
+	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer" -Force
+}
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer" -Name EULA -PropertyType DWord -Value 1 -Force
 
 #region UI
 # Do not show messages from Adobe when the product launches
