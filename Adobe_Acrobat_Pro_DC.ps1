@@ -1,4 +1,6 @@
 # Firstly, open and close the app. Then you may run the script, otherwise some registry key won'be created
+# Suitable for Adobe Acrobat Reader DC x64 too
+
 Get-Service -Name AdobeARMservice | Stop-Service -Force
 
 # Unisntall Adobe Software Integrity Service
@@ -8,11 +10,14 @@ if (Test-Path -Path "${env:ProgramFiles(x86)}\Common Files\Adobe\AdobeGCClient\A
 }
 
 # Accept EULA even it was accepted programmatically. Non-acceptance of the UELA may result in the 100700 (100600) error when you run the updater
-if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer"))
+if ((Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\Adobe\Adobe Acrobat\DC\RDCNotificationAppx" -Name AppPackageName) -notmatch "Reader")
 {
-	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer" -Force
+	if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer"))
+	{
+		New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer" -Force
+	}
+	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer" -Name EULA -PropertyType DWord -Value 1 -Force
 }
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer" -Name EULA -PropertyType DWord -Value 1 -Force
 
 #region UI
 # Do not show messages from Adobe when the product launches
