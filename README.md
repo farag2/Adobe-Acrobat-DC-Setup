@@ -1,4 +1,4 @@
-[![ko*fi](https://www.ko*fi.com/img/githubbutton_sm.svg)](https://ko*fi.com/Q5Q51QUJC)
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q5Q51QUJC)
 
 ## Overview
 
@@ -12,7 +12,7 @@ PowerShell script for Adobe Acrobat Pro DC/Reader DC setup
 * Remove Firefox addons;
 * Remove COM Add*Ins for Office;
 * Create a scheduled task to configure Adobe Acrobat Pro DC in Task Scheduler;
-* Turn off both updates to the product's web*plugin components as well as all services;
+* Turn off both updates to the product's web-plugin components as well as all services;
 * Turn off all Document Cloud service access;
 * Turn off preference synchronization across devices;
 * Do not show messages from Adobe when the product launches;
