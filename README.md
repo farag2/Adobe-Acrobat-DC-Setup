@@ -6,17 +6,10 @@ PowerShell script for Adobe Acrobat Pro DC/Reader DC setup
 
 ## Features
 
-* Remove Adobe Acrobat Pro DC update tasks from startup;
-* Turn off services
-* Disable update tasks;
-* Remove Firefox addons;
-* Remove COM Add*Ins for Office;
-* Create a scheduled task to configure Adobe Acrobat Pro DC in Task Scheduler;
-* Turn off both updates to the product's web-plugin components as well as all services;
-* Turn off all Document Cloud service access;
-* Turn off preference synchronization across devices;
+* Uninstall Adobe Software Integrity Service;
+* Accept EULA even it was accepted programmatically.;
 * Do not show messages from Adobe when the product launches;
-* Callapse all tips on the main page;
+* Collapse all tips on the main page;
 * Always use page Layout Style: "Single Pages Contininuous";
 * Turn on dark theme;
 * Hide "Share" button lable from Toolbar
