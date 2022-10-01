@@ -1,7 +1,7 @@
 # Firstly, open and close the app. Then you may run the script, otherwise some registry key won'be created
 # Suitable for Adobe Acrobat Reader DC x64 too
 
-Get-Service -Name AdobeARMservice | Stop-Service -Force
+Get-Service -Name AdobeARMservice -ErrorAction Ignore | Stop-Service -Force
 
 # Unisntall Adobe Software Integrity Service
 if (Test-Path -Path "${env:ProgramFiles(x86)}\Common Files\Adobe\AdobeGCClient\AdobeCleanUpUtility.exe")
