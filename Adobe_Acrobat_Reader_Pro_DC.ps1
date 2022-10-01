@@ -3,7 +3,7 @@
 
 Get-Service -Name AdobeARMservice -ErrorAction Ignore | Stop-Service -Force
 
-# Unisntall Adobe Software Integrity Service
+# Uninstall Adobe Software Integrity Service
 if (Test-Path -Path "${env:ProgramFiles(x86)}\Common Files\Adobe\AdobeGCClient\AdobeCleanUpUtility.exe")
 {
 	Start-Process -FilePath "${env:ProgramFiles(x86)}\Common Files\Adobe\AdobeGCClient\AdobeCleanUpUtility.exe" -Wait
