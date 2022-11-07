@@ -33,6 +33,6 @@ PowerShell script for Adobe Acrobat Pro DC/Reader DC setup
 * [Download Acrobat Pro DC x64 via PowerShell](https://github.com/farag2/Utilities/blob/master/Download)
 * [Download Acrobat Pro DC x86 via PowerShell](https://github.com/farag2/Utilities/blob/master/Download)
 * [Download Acrobat Reader DC x64 via PowerShell](https://github.com/farag2/Utilities/blob/master/Download)
-* [Updates](https://www.adobe.com/devnet*docs/acrobatetk/tools/ReleaseNotesDC/index.html)
+* [Updates](https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html)
 * [Release Notes](https://www.adobe.com/devnet-docs/acrobatetk/tools/ReleaseNotesDC/index.html)
 * [Reader DC and Acrobat Pro DC Cleaner Tool](https://www.adobe.com/devnet-docs/acrobatetk/tools/Labs/cleaner.html#downloads)
