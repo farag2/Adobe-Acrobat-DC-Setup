@@ -15,16 +15,6 @@ PowerShell script for Adobe Acrobat Pro DC/Reader DC setup
 * Hide "Share" button lable from Toolbar
 * Remember Task Pane state after document closed;
 * Left "Edit PDF" and "Organize Pages" only tools in the Task Pane;
-* Clear favorite Quick Tools (сommented out);
-* Clear Quick Tools (сommented out);
-* Show Quick Tools in Toolbar
-  * "Save file";
-  * "Print file";
-  * "Undo last change";
-  * "Redo last change";
-  * "Page number";
-  * "Rotate counterclockwise. Change is saved";
-  * "Rotate clockwise. Change is saved"
 * Restore last view settings when reopening documents.
 
 ## Links
