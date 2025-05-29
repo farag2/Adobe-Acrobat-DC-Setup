@@ -1,5 +1,6 @@
 # Firstly, open and close the app. Then you may run the script, otherwise some registry key won'be created
 # Suitable for Adobe Acrobat Reader DC x64 too
+# https://www.adobe.com/devnet-docs/acrobatetk/tools/PrefRef/Windows/endindex.html
 
 Get-Service -Name AdobeARMservice -ErrorAction Ignore | Stop-Service -Force
 
@@ -20,38 +21,16 @@ if ((Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\Adobe\Adobe Acrobat\DC\RDCNotif
 }
 
 #region UI
-# Do not show messages from Adobe when the product launches
-# https://www.adobe.com/devnet-docs/acrobatetk/tools/PrefRef/Windows/index.html
-if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM"))
-{
-	New-Item -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM" -Force
-}
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\IPM" -Name bShowMsgAtLaunch -PropertyType DWord -Value 0 -Force
-
 # Collapse all tips on the main page
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Name bFirstMileMinimized -PropertyType DWord -Value 1 -Force
 
 # Always use page Layout Style: "Single Pages Continuous"
+# https://www.adobe.com/devnet-docs/acrobatetk/tools/PrefRef/Windows/Originals.html#idkeyname_1_17353
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\Originals" -Name iPageViewLayoutMode -PropertyType DWord -Value 2 -Force
 
 # Turn on dark theme
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name aActiveUITheme -PropertyType String -Value DarkTheme -Force
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bHonorOSTheme -PropertyType DWord -Value 0 -Force
-
-# Hide "Share" button lable from Toolbar
-New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bHideShareButtonLabel -PropertyType DWord -Value 1 -Force
-
-# Remember Task Pane state after document closed
-if ((Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\Adobe\Adobe Acrobat\DC\RDCNotificationAppx" -Name AppPackageName) -match "Reader")
-{
-	# Acrobat Reader DC
-	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bRHPSticky -PropertyType DWord -Value 1 -Force
-}
-else
-{
-	# Acrobat Pro DC
-	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name aDefaultRHPViewModeL -PropertyType String -Value AppSwitcherOnly -Force
-}
 
 # Left "Edit PDF" and "Organize Pages" the only tools in the Task Pane
 if ((Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\Adobe\Adobe Acrobat\DC\RDCNotificationAppx" -Name AppPackageName) -notmatch "Reader")
@@ -62,6 +41,7 @@ if ((Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\Adobe\Adobe Acrobat\DC\RDCNotif
 }
 
 # Restore last view settings when reopening documents
+# https://www.adobe.com/devnet-docs/acrobatetk/tools/PrefRef/Windows/RememberedViews.html#idkeyname_1_18343
 if ((Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\Adobe\Adobe Acrobat\DC\RDCNotificationAppx" -Name AppPackageName) -notmatch "Reader")
 {
 	if (-not (Test-Path -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews"))
