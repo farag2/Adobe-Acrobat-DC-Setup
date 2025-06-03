@@ -20,7 +20,6 @@ if ((Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\Adobe\Adobe Acrobat\DC\RDCNotif
 	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AdobeViewer" -Name EULA -PropertyType DWord -Value 1 -Force
 }
 
-#region UI
 # Collapse all tips on the main page
 New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\HomeWelcomeFirstMile" -Name bFirstMileMinimized -PropertyType DWord -Value 1 -Force
 
@@ -50,4 +49,7 @@ if ((Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\Adobe\Adobe Acrobat\DC\RDCNotif
 	}
 	New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\RememberedViews" -Name iRememberView -PropertyType DWord -Value 2 -Force
 }
-#endregion UI
+
+# Enable new UI
+New-ItemProperty -Path "HKCU:\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bEnableAV2 -PropertyType DWord -Value 1 -Force
+
