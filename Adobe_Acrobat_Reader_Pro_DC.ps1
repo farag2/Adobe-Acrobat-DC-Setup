@@ -51,5 +51,4 @@ if ((Get-ItemPropertyValue -Path "HKLM:\SOFTWARE\Adobe\Adobe Acrobat\DC\RDCNotif
 }
 
 # Enable new UI
-New-ItemProperty -Path "HKCU:\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bEnableAV2 -PropertyType DWord -Value 1 -Force
-
+New-ItemProperty -Path "HKCU:\Software\Adobe\Adobe Acrobat\DC\AVGeneral" -Name bEnableAV2 -PropertyType DWord -Value 1 -Force
