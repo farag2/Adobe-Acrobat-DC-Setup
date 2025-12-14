@@ -1,8 +1,11 @@
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q5Q51QUJC)
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/farag)
 
 ## Overview
 
-PowerShell script for Adobe Acrobat Pro DC/Reader DC setup
+A PowerShell script to configure Adobe Acrobat Reader/Pro
+
+> [!IMPORTANT]
+> The script doesn't make your Adobe Acrobat copy licensed
 
 ## Features
 
