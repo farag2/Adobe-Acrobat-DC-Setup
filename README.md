@@ -1,5 +1,3 @@
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/farag)
-
 ## Overview
 
 A PowerShell script to configure Adobe Acrobat Reader/Pro
